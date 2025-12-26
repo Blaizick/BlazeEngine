@@ -44,9 +44,10 @@ public static class Core
 
 public class GameCore : IGameCore
 {
+    private Sprite sprite;
     public void Init()
     {
-        
+        sprite = new Sprite(new Texture(new Image(@"C:\\Users\\novik\\Downloads\\5cc0b80b002fddb212d209e2aa556083.png")));
     }
 
     public int frames = 0;
@@ -77,6 +78,8 @@ public class GameCore : IGameCore
     {
         BlazeEngine.Draw.Color = Color.White;
         BlazeEngine.Draw.Rect(0, 0, 1, 1);
+        BlazeEngine.Draw.sprite = sprite;
+        BlazeEngine.Draw.Sprite(1, 0, 1, 1);
     }
 
     public void Quit()

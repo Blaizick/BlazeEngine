@@ -20,7 +20,9 @@ public class Graphics
         Batcher batcher = new();
         ColorBatch colorBatch = new(batcher, buffers);
         colorBatch.Init();
-        Draw.Construct(buffers, batcher, colorBatch);
+        SpriteBatch spriteBatch = new(batcher, buffers);
+        spriteBatch.Init();
+        Draw.Construct(buffers, batcher, colorBatch, spriteBatch);
     }
 }
 
@@ -44,7 +46,6 @@ public class Buffers
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
     }
 }
-
 
 public class Shader
 {
@@ -134,7 +135,8 @@ public static class Draw
         set
         {
             s_Color = value;
-            colorBatch.color = s_Color;
+            spriteBatch.Color = s_Color;
+            colorBatch.Color = s_Color;
         }
     }
 
@@ -153,29 +155,50 @@ public static class Draw
         }
     }
 
-    public static Buffers buffers;
-    public static Batcher batcher;
-    public static ColorBatch colorBatch;
-
+    private static Sprite s_Sprite;
+    public static Sprite sprite
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            return s_Sprite;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            s_Sprite = value;
+            spriteBatch.Sprite = s_Sprite;
+        }
+    }
+    
+    private static Matrix4 s_ProjView;
     public static Matrix4 ProjView
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
-            return colorBatch.ProjView;
+            return s_ProjView;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            colorBatch.ProjView = value;
+            s_ProjView = value;
+            colorBatch.ProjView = s_ProjView;
+            spriteBatch.ProjView = s_ProjView;
         }
     }
     
-    public static void Construct(Buffers buffers, Batcher batcher, ColorBatch colorBatch)
+    public static Buffers buffers;
+    public static Batcher batcher;
+    public static ColorBatch colorBatch;
+    public static SpriteBatch spriteBatch;
+    
+    public static void Construct(Buffers buffers, Batcher batcher, ColorBatch colorBatch, SpriteBatch spriteBatch)
     {
         Draw.buffers = buffers;
         Draw.batcher = batcher;
         Draw.colorBatch = colorBatch;
+        Draw.spriteBatch = spriteBatch;
     }
 
     public static void Flush()
@@ -187,10 +210,18 @@ public static class Draw
     {
         colorBatch.DrawRect(x, y, w, h);
     }
-
     public static void Rect(float x, float y, float w, float h, float r)
     {
         colorBatch.DrawRect(x, y, w, h, r);
+    }
+
+    public static void Sprite(float x, float y, float w, float h)
+    {
+        spriteBatch.DrawSprite(x, y, w, h);
+    }
+    public static void Sprite(float x, float y, float w, float h, float r)
+    {
+        spriteBatch.DrawSprite(x, y, w, h, r);
     }
 }
 
@@ -221,10 +252,11 @@ public class Batcher
 public static class Shaders
 {
     public static Shader colorBatchShader;
+    public static Shader spriteBatchShader;
     
     public static void Init()
     {
-        colorBatchShader = new Shader("#version 330 core\n" +
+        colorBatchShader = new("#version 330 core\n" +
                                        "layout(location = 0) in vec2 aPosition;\n" + 
                                        "layout(location = 1) in vec4 aColor;\n" +
                                        "out vec4 vColor;\n" +
@@ -241,6 +273,28 @@ public static class Shaders
             "{\n" +
             "   oColor = vColor;\n" +
             "}\n");
+        spriteBatchShader = new("#version 330 core\n" +
+                                "layout(location = 0) in vec2 aPosition;\n" + 
+                                "layout(location = 1) in vec4 aColor;\n" +
+                                "layout(location = 2) in vec2 aTexCoord;\n" +
+                                "out vec4 vColor;\n" +
+                                "out vec2 vTexCoord;\n" +
+                                "uniform mat4 uProjView;\n" +
+                                "void main(void)\n" +
+                                "{\n" +
+                                "    vTexCoord = aTexCoord;\n" +
+                                "    vColor = aColor;\n" +
+                                "    gl_Position = uProjView * vec4(aPosition.x, aPosition.y, 0.0, 1.0);\n" +
+                                "}\n", 
+            "#version 330 core\n" +
+            "out vec4 oColor;\n" +
+            "in vec4 vColor;\n" +
+            "in vec2 vTexCoord;\n" +
+            "uniform sampler2D uTexture;\n" +
+            "void main()\n" +
+            "{\n" +
+            "   oColor = vColor * texture(uTexture, vTexCoord);\n" +
+            "}\n");
     }
 }
 
@@ -249,14 +303,14 @@ public interface IBatch
     public void SetDirty();
 }
 
-public class ColorBatch : IBatch
+public class BaseBatch<T> : IBatch where T : class, IBatchItem
 {
-    private ColorBatchItem m_LastItem;
+    protected T m_LastItem;
     public bool isDirty = true;
     public Batcher batcher;
     public Buffers buffers;
-    
-    private Matrix4 m_ProjView = Matrix4.Identity;
+
+    protected Matrix4 m_ProjView = Matrix4.Identity;
     public Matrix4 ProjView
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -271,15 +325,28 @@ public class ColorBatch : IBatch
             SetDirty();
         }
     }
-    
-    public Color color = Color.White;
-    
-    public ColorBatch(Batcher batcher, Buffers buffers)
+
+    protected Color m_Color = Color.White;
+    public Color Color
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            return m_Color;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            m_Color = value;
+        }
+    }
+
+    public BaseBatch(Batcher batcher, Buffers buffers)
     {
         this.batcher = batcher;
         this.buffers = buffers;
     }
-
+    
     public void Init()
     {
         batcher.batches.Add(this);
@@ -291,7 +358,43 @@ public class ColorBatch : IBatch
         isDirty = true;
     }
 
-    public void DrawRect(float[] vertices, int figuresCount)
+    public Vec2[] GetRectPositions(float x, float y, float w, float h)
+    {
+        float hw = w * 0.5f;
+        float hh = h * 0.5f;
+        return new[]
+        {
+            new Vec2(x - hw, y - hh),
+            new Vec2(x + hw, y - hh),
+            new Vec2(x + hw, y + hh),
+            new Vec2(x - hw, y + hh),
+        };
+    }
+    public Vec2[] GetRectPositions(float x, float y, float w, float h, float r)
+    {
+        Matrix4 mat = Matrix4.CreateTranslation(new Vector3(x, y, 0)) * 
+                      Matrix4.CreateRotationZ(r * Mathf.Deg2Rad) * 
+                      Matrix4.CreateScale(new Vector3(w, h, 1));
+        float hw = 0.5f;
+        float hh = 0.5f;
+        return new[]
+        {
+            (Vec2)(mat * new Vector4(-hw, -hh, 0, 1)),
+            (Vec2)(mat * new Vector4(hw, -hh, 0, 1)),
+            (Vec2)(mat * new Vector4(hw, hh, 0, 1)),
+            (Vec2)(mat * new Vector4(-hw, hh, 0, 1))
+        };
+    }
+}
+
+public class ColorBatch : BaseBatch<ColorBatchItem>
+{
+    public ColorBatch(Batcher batcher, Buffers buffers) : base(batcher, buffers)
+    {
+        
+    }
+
+    public void DrawRects(float[] vertices, int figuresCount)
     {
         if (isDirty || !m_LastItem.CanAdd(1))
         {
@@ -301,7 +404,7 @@ public class ColorBatch : IBatch
         }
         m_LastItem.Add(vertices, figuresCount);
     }
-    public void DrawRect(Vec2[] positions, int figuresCount)
+    public void DrawRects(Vec2[] positions, int figuresCount)
     {
         float[] vertices = new float[figuresCount * ColorBatchItem.VerticesPerFigure];
         for (int i = 0; i < figuresCount * IBatchItem.VertexesPerFigure; i++)
@@ -311,43 +414,101 @@ public class ColorBatch : IBatch
             vertices[verticeOffset + 0] = positions[i].X;
             vertices[verticeOffset + 1] = positions[i].Y;
 
-            vertices[verticeOffset + 2] = color.Rf;
-            vertices[verticeOffset + 3] = color.Gf;
-            vertices[verticeOffset + 4] = color.Bf;
-            vertices[verticeOffset + 5] = color.Af;
+            vertices[verticeOffset + 2] = m_Color.Rf;
+            vertices[verticeOffset + 3] = m_Color.Gf;
+            vertices[verticeOffset + 4] = m_Color.Bf;
+            vertices[verticeOffset + 5] = m_Color.Af;
         }
-        DrawRect(vertices, figuresCount);
+        DrawRects(vertices, figuresCount);
     }
     public void DrawRect(float x, float y, float w, float h, float r)
     {
-        Matrix4 mat = Matrix4.CreateTranslation(new Vector3(x, y, 0)) * 
-                      Matrix4.CreateRotationZ(r * Mathf.Deg2Rad) * 
-                      Matrix4.CreateScale(new Vector3(w, h, 1));
-        float hw = 0.5f;
-        float hh = 0.5f;
-        DrawRect(new[]
-        {
-            (Vec2)(mat * new Vector4(-hw, -hh, 0, 1)),
-            (Vec2)(mat * new Vector4(hw, -hh, 0, 1)),
-            (Vec2)(mat * new Vector4(hw, hh, 0, 1)),
-            (Vec2)(mat * new Vector4(-hw, hh, 0, 1))
-        }, 1);
+        DrawRects(GetRectPositions(x, y, w, h, r), 1);
     }
     public void DrawRect(float x, float y, float w, float h)
     {
-        float hw = w * 0.5f;
-        float hh = h * 0.5f;
-        DrawRect(new[]
-        {
-            new Vec2(x - hw, y - hh),
-            new Vec2(x + hw, y - hh),
-            new Vec2(x + hw, y + hh),
-            new Vec2(x - hw, y + hh),
-        }, 1);
+        DrawRects(GetRectPositions(x, y, w, h), 1);
     }
 }
 
-public class ColorBatchItem : IBatchItem
+public class SpriteBatch : BaseBatch<SpriteBatchItem>
+{
+    private Sprite m_Sprite = null!;
+    public Sprite Sprite
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            return m_Sprite;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            if (m_Sprite == null || m_Sprite.Texture != value.Texture)
+            {
+                SetDirty();                
+            }
+            m_Sprite = value;
+        }
+    }
+    
+    public SpriteBatch(Batcher batcher, Buffers buffers) : base(batcher, buffers)
+    {
+        
+    }
+
+    public void DrawSprites(float[] vertices, int figuresCount)
+    {
+        if (isDirty || !m_LastItem.CanAdd(1))
+        {
+            m_LastItem = new SpriteBatchItem(buffers, Shaders.spriteBatchShader, m_ProjView, m_Sprite.Texture);
+            batcher.Add(m_LastItem);
+            isDirty = false;
+        }
+        m_LastItem.Add(vertices, figuresCount);
+    }
+    public void DrawSprites(Vec2[] positions, Vec2[] texCoords, int figuresCount)
+    {
+        float[] vertices = new float[figuresCount * SpriteBatchItem.VerticesPerFigure];
+        for (int i = 0; i < figuresCount * IBatchItem.VertexesPerFigure; i++)
+        {
+            int verticeOffset = i * SpriteBatchItem.VerticesPerVertex;
+
+            vertices[verticeOffset + 0] = positions[i].X;
+            vertices[verticeOffset + 1] = positions[i].Y;
+
+            vertices[verticeOffset + 2] = m_Color.Rf;
+            vertices[verticeOffset + 3] = m_Color.Gf;
+            vertices[verticeOffset + 4] = m_Color.Bf;
+            vertices[verticeOffset + 5] = m_Color.Af;
+            
+            vertices[verticeOffset + 6] = texCoords[i].X;
+            vertices[verticeOffset + 7] = texCoords[i].Y;
+        }
+        DrawSprites(vertices, figuresCount);
+    }
+    public void DrawSprite(float x, float y, float w, float h, float r)
+    {
+        DrawSprites(GetRectPositions(x, y, w, h, r), GetTexCoords(Sprite.UV), 1);
+    }
+    public void DrawSprite(float x, float y, float w, float h)
+    {
+        DrawSprites(GetRectPositions(x, y, w, h), GetTexCoords(Sprite.UV), 1);
+    }
+
+    public Vec2[] GetTexCoords(in Rect uv)
+    {
+        return new[]
+        {
+            new Vec2(uv.MinX, uv.MinY),
+            new Vec2(uv.MaxX, uv.MinY),
+            new Vec2(uv.MaxX, uv.MaxY),
+            new Vec2(uv.MinX, uv.MaxY),
+        };
+    }
+}
+
+public class ColorBatchItem : BaseBatchItem
 {
     public const int PositionVertices = 2;
     public const int PositionStride = PositionVertices * sizeof(float);
@@ -362,45 +523,19 @@ public class ColorBatchItem : IBatchItem
     public const int VerticesPerBatch = VerticesPerFigure * IBatchItem.FiguresPerBatch;
     public const int VertexStride = VerticesPerVertex * sizeof(float);
 
-    public Shader shader;
-    public Buffers buffers;
-    public Matrix4 projView;
-
-    private int m_FiguresCount = 0;
-    
-    private float[] m_Vertices = new float[VerticesPerBatch];
-    
-    public ColorBatchItem(Buffers buffers, Shader shader, Matrix4 projView)
+    public ColorBatchItem(Buffers buffers, Shader shader, Matrix4 projView) : base(buffers, shader, projView)
     {
-        this.buffers = buffers;
-        this.shader = shader;
-        this.projView = projView;
+        m_Vertices = new float[VerticesPerBatch];
     }
 
-    public void Add(float[] vertices, int figuresCount)
+    public override void Add(float[] vertices, int figuresCount)
     {
-        int offset = m_FiguresCount * VerticesPerFigure;
-        for (int i = 0; i < figuresCount * VerticesPerFigure; i++)
-        {
-            m_Vertices[offset + i] = vertices[i];
-        }
-        m_FiguresCount += figuresCount;
+        Add(vertices, figuresCount, m_FiguresCount * VerticesPerFigure, figuresCount * VerticesPerFigure);
     }
 
-    public bool CanAdd(int figuresCount)
+    public override void Flush()
     {
-        return m_FiguresCount + figuresCount <= IBatchItem.FiguresPerBatch;
-    }
-    
-    public void Flush()
-    {
-        int verticesCount = m_FiguresCount * VerticesPerFigure;
-        int indicesCount = m_FiguresCount * IBatchItem.IndicesPerFigure;
-        
-        buffers.Bind();        
-        shader.Use();
-
-        shader.SetUniform("uProjView", ref projView);
+        BindAndUseAll();
         
         GL.VertexAttribPointer(0, PositionVertices, VertexAttribPointerType.Float, false, VertexStride, PositionOffset);
         GL.EnableVertexAttribArray(0);
@@ -408,10 +543,110 @@ public class ColorBatchItem : IBatchItem
         GL.VertexAttribPointer(1, ColorVertices, VertexAttribPointerType.Float, false, VertexStride, ColorOffset);
         GL.EnableVertexAttribArray(1);
         
+        LoadAndDraw(m_FiguresCount *  VerticesPerFigure);
+    }
+}
+
+public class SpriteBatchItem : BaseBatchItem
+{
+    public const int PositionVertices = 2;
+    public const int PositionStride = PositionVertices * sizeof(float);
+    public const int PositionOffset = 0;
+    
+    public const int ColorVertices = 4;
+    public const int ColorStride = ColorVertices * sizeof(float);
+    public const int ColorOffset = PositionOffset + PositionStride;
+
+    public const int TexCoordVertices = 2;
+    public const int TexCoordStride = TexCoordVertices * sizeof(float);
+    public const int TexCoordOffset = ColorOffset + ColorStride;
+
+    public const int VerticesPerVertex = PositionVertices + ColorVertices + TexCoordVertices;
+    public const int VerticesPerFigure = VerticesPerVertex * IBatchItem.VertexesPerFigure;
+    public const int VerticesPerBatch = VerticesPerFigure * IBatchItem.FiguresPerBatch;
+    public const int VertexStride = VerticesPerVertex * sizeof(float);
+
+    public Texture texture;
+    
+    public SpriteBatchItem(Buffers buffers, Shader shader, Matrix4 projView, Texture texture) : base(buffers, shader, projView)
+    {
+        m_Vertices = new float[VerticesPerBatch];
+        this.texture = texture;
+    }
+
+    public override void Add(float[] vertices, int figuresCount)
+    {
+        Add(vertices, figuresCount, m_FiguresCount * VerticesPerFigure, figuresCount * VerticesPerFigure);
+    }
+
+    public override void Flush()
+    {
+        BindAndUseAll();
+        
+        texture.Bind(0);
+        
+        GL.VertexAttribPointer(0, PositionVertices, VertexAttribPointerType.Float, false, VertexStride, PositionOffset);
+        GL.EnableVertexAttribArray(0);
+        
+        GL.VertexAttribPointer(1, ColorVertices, VertexAttribPointerType.Float, false, VertexStride, ColorOffset);
+        GL.EnableVertexAttribArray(1);
+
+        GL.VertexAttribPointer(2, TexCoordVertices, VertexAttribPointerType.Float, false, VertexStride, TexCoordOffset);
+        GL.EnableVertexAttribArray(2);
+        
+        LoadAndDraw(m_FiguresCount *  VerticesPerFigure);
+    }
+}
+
+public abstract class BaseBatchItem : IBatchItem
+{
+    protected int m_FiguresCount = 0;
+    protected float[] m_Vertices;
+    
+    public Shader shader;
+    public Buffers buffers;
+    public Matrix4 projView;
+
+    public BaseBatchItem(Buffers buffers, Shader shader, Matrix4 projView)
+    {
+        this.buffers = buffers;
+        this.shader = shader;
+        this.projView = projView;
+    }
+    
+    public bool CanAdd(int figuresCount)
+    {
+        return m_FiguresCount + figuresCount <= IBatchItem.FiguresPerBatch;
+    }
+
+    public void BindAndUseAll()
+    {
+        buffers.Bind();        
+        shader.Use();
+        shader.SetUniform("uProjView", ref projView);
+    }
+
+    public void LoadAndDraw(int verticesCount)
+    {
+        int indicesCount = m_FiguresCount * IBatchItem.IndicesPerFigure;
+        
         GL.BufferData(BufferTarget.ArrayBuffer, verticesCount * sizeof(float), m_Vertices, BufferUsage.StaticDraw);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indicesCount * sizeof(uint), IBatchItem.indices, BufferUsage.StaticDraw);
         
         GL.DrawElements(PrimitiveType.Triangles, indicesCount, DrawElementsType.UnsignedInt, 0);
+    }
+
+    public abstract void Flush();
+
+    public abstract void Add(float[] vertices, int figuresCount);
+
+    public void Add(float[] vertices, int figuresCount, int offset, int verticesCount)
+    {
+        for (int i = 0; i < verticesCount; i++)
+        {
+            m_Vertices[offset + i] = vertices[i];
+        }
+        m_FiguresCount += figuresCount;
     }
 }
 
@@ -443,6 +678,8 @@ public interface IBatchItem
     }
     
     public void Flush();
+    public bool CanAdd(int figuresCount);
+    public void Add(float[] vertices, int figuresCount);
 }
 
 public class Sprite
