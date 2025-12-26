@@ -11,12 +11,14 @@ public unsafe class Application
     public Window window;
     public ScriptCore scriptCore;
     public InputCore inputCore;
+    public PhysicsCore physicsCore;
     
-    public Application(Window window, ScriptCore scriptCore, InputCore inputCore)
+    public Application(Window window, ScriptCore scriptCore, InputCore inputCore, PhysicsCore physicsCore)
     {
         this.window = window;
         this.scriptCore = scriptCore;
         this.inputCore = inputCore;
+        this.physicsCore = physicsCore;
     }
     
     public void Init()
@@ -30,7 +32,7 @@ public unsafe class Application
         SDL3.SDL_GL_SetAttribute(SDL_GLAttr.SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL3.SDL_GL_SetAttribute(SDL_GLAttr.SDL_GL_CONTEXT_FLAGS, 0);
         SDL3.SDL_GL_SetAttribute(SDL_GLAttr.SDL_GL_CONTEXT_PROFILE_MASK, SDL3.SDL_GL_CONTEXT_PROFILE_CORE);
-
+        
         window.Create();
         
         var glContext = SDL3.SDL_GL_CreateContext(window.sdlWindow);
@@ -42,6 +44,9 @@ public unsafe class Application
         SDL3.SDL_GL_SetSwapInterval(0);
 
         GLLoader.LoadBindings(new SDL3GLBindingsContext());
+        
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         
         window.SyncSize();
     }
@@ -69,9 +74,18 @@ public unsafe class Application
             }
             
             scriptCore.CallUpdate();
+
+            if (Time.TimeSinceLastFixedUpdate > Physics.FixedUpdateDelay)
+            {
+                scriptCore.CallPreFixedUpdate();
+                physicsCore.FixedUpdate();
+                scriptCore.CallFixedUpdate();
+                scriptCore.CallPostFixedUpdate();
+                Time.FixedUpdate();
+            }
             
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            Draw.ProjView = Camera.main.projView;
+            Draw.ProjView = Camera.main.ProjView;
             scriptCore.CallDraw();
             Draw.Flush();
             SDL3.SDL_GL_SwapWindow(window.sdlWindow);

@@ -372,17 +372,25 @@ public class BaseBatch<T> : IBatch where T : class, IBatchItem
     }
     public Vec2[] GetRectPositions(float x, float y, float w, float h, float r)
     {
-        Matrix4 mat = Matrix4.CreateTranslation(new Vector3(x, y, 0)) * 
-                      Matrix4.CreateRotationZ(r * Mathf.Deg2Rad) * 
-                      Matrix4.CreateScale(new Vector3(w, h, 1));
-        float hw = 0.5f;
-        float hh = 0.5f;
+        float rad = r * MathF.PI / 180f;
+        float cos = MathF.Cos(rad);
+        float sin = MathF.Sin(rad);
+
+        float hw = w * 0.5f;
+        float hh = h * 0.5f;
+
+        Vec2 Rotate(Vec2 p) =>
+            new Vec2(
+                p.X * cos - p.Y * sin,
+                p.X * sin + p.Y * cos
+            ) + new Vec2(x, y);
+
         return new[]
         {
-            (Vec2)(mat * new Vector4(-hw, -hh, 0, 1)),
-            (Vec2)(mat * new Vector4(hw, -hh, 0, 1)),
-            (Vec2)(mat * new Vector4(hw, hh, 0, 1)),
-            (Vec2)(mat * new Vector4(-hw, hh, 0, 1))
+            Rotate(new Vec2(-hw, -hh)),
+            Rotate(new Vec2( hw, -hh)),
+            Rotate(new Vec2( hw,  hh)),
+            Rotate(new Vec2(-hw,  hh))
         };
     }
 }
@@ -724,6 +732,11 @@ public class Sprite
     {
         m_Texture = texture;
         Region = RectInt.FromBounds(0, 0, texture.image.size.X, texture.image.size.Y);
+    }
+
+    public Sprite(string path) : this(new Texture(new Image(path)))
+    {
+        
     }
 
     public void Recalculate()

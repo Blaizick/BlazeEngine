@@ -29,6 +29,21 @@ public class ScriptCore
     {
         gameCore.Quit();
     }
+    public void CallPreFixedUpdate()
+    {
+        if(gameCore is IFixedUpdateGameCore core)
+            core.PreFixedUpdate();
+    }
+    public void CallFixedUpdate()
+    {
+        if(gameCore is IFixedUpdateGameCore core)
+            core.FixedUpdate();
+    }
+    public void CallPostFixedUpdate()
+    {
+        if(gameCore is IFixedUpdateGameCore core)
+            core.PostFixedUpdate();
+    }
 }
 
 public interface IGameCore
@@ -37,4 +52,10 @@ public interface IGameCore
     public void Update();
     public void Draw();
     public void Quit();
+}
+public interface IFixedUpdateGameCore
+{
+    public void PreFixedUpdate();
+    public void FixedUpdate();
+    public void PostFixedUpdate();
 }

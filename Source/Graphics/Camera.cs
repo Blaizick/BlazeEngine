@@ -5,10 +5,16 @@ namespace BlazeEngine;
 
 public class Camera
 {
-    public Matrix4 view;
-    public Matrix4 proj;
-    public Matrix4 projView;
-
+    private Matrix4 m_Proj;
+    private Matrix4 m_View;
+    private Matrix4 m_ProjView;
+    private Matrix4 m_InvProjView;
+    
+    public Matrix4 View => m_View;
+    public Matrix4 Proj => m_Proj;
+    public Matrix4 ProjView => m_ProjView;
+    public Matrix4 InvProjView => m_InvProjView;
+    
     public const float PixelsPerInit = 100.0f;
 
     public static Camera main;
@@ -87,14 +93,21 @@ public class Camera
 
     public void Recalculate()
     {
-        view = Matrix4.CreateTranslation(-m_Position.X, -m_Position.Y, 0.0f) *
+        m_View = Matrix4.CreateTranslation(-m_Position.X, -m_Position.Y, 0.0f) *
                Matrix4.CreateRotationZ(-m_Rotation) *
                Matrix4.CreateScale(1.0f / m_Size, 1.0f / m_Size, 1.0f);
         {
             float hw = window.Size.X / PixelsPerInit * 0.5f;
             float hh = window.Size.Y / PixelsPerInit * 0.5f;
-            proj = Matrix4.CreateOrthographicOffCenter(-hw, hw, -hh, hh, 1.0f, -1.0f);
+            m_Proj = Matrix4.CreateOrthographicOffCenter(-hw, hw, -hh, hh, 1.0f, -1.0f);
         }
-        projView = view * proj;
+        m_ProjView = m_View * m_Proj;
+        m_InvProjView = Matrix4.Invert(m_ProjView);
+    }
+
+    public Vec2 ViewportToWorldPoint(Vec2 point)
+    {
+        Vec2 ndc = new Vec2(point.X / window.Size.X * 2 - 1, (window.Size.Y - point.Y) / window.Size.Y * 2 - 1);
+        return m_InvProjView * ndc;
     }
 }
