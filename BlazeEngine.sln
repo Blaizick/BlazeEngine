@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeEngine", "BlazeEngine\BlazeEngine.csproj", "{06C14B96-6016-439F-A6B0-D03E7ED259A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeEnvironment", "BlazeEnvironment\BlazeEnvironment.csproj", "{61DA33F9-C982-47C4-97F8-2093348002BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazeBootstrap", "BlazeBootstrap\BlazeBootstrap.csproj", "{EB5F59BD-23B4-45C9-9039-CA84CB00083E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06C14B96-6016-439F-A6B0-D03E7ED259A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C14B96-6016-439F-A6B0-D03E7ED259A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C14B96-6016-439F-A6B0-D03E7ED259A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06C14B96-6016-439F-A6B0-D03E7ED259A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61DA33F9-C982-47C4-97F8-2093348002BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61DA33F9-C982-47C4-97F8-2093348002BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61DA33F9-C982-47C4-97F8-2093348002BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61DA33F9-C982-47C4-97F8-2093348002BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB5F59BD-23B4-45C9-9039-CA84CB00083E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5F59BD-23B4-45C9-9039-CA84CB00083E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5F59BD-23B4-45C9-9039-CA84CB00083E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5F59BD-23B4-45C9-9039-CA84CB00083E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
