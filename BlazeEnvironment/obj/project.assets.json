@@ -2,6 +2,33 @@
   "version": 3,
   "targets": {
     "net10.0": {
+      "ImGui.NET.Docking/1.75.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/ImGui.NET.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/ImGui.NET.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libcimgui.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/libcimgui.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win-x64/native/cimgui.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/cimgui.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -356,6 +383,23 @@
     }
   },
   "libraries": {
+    "ImGui.NET.Docking/1.75.0": {
+      "sha512": "OR1NksDIaBcL1cLTx8CztG6Dvpgc7tu82JWYoYkerzWlsq4k160ZOG+YUo5OBaIkEDBGh/6AQ6Y0xF58FXo8PQ==",
+      "type": "package",
+      "path": "imgui.net.docking/1.75.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net40/ImGui.NET.targets",
+        "imgui.net.docking.1.75.0.nupkg.sha512",
+        "imgui.net.docking.nuspec",
+        "lib/netstandard2.0/ImGui.NET.dll",
+        "runtimes/linux-x64/native/libcimgui.so",
+        "runtimes/osx-x64/native/libcimgui.dylib",
+        "runtimes/win-x64/native/cimgui.dll",
+        "runtimes/win-x86/native/cimgui.dll"
+      ]
+    },
     "Microsoft.NETCore.Platforms/1.1.0": {
       "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
@@ -664,6 +708,7 @@
   "projectFileDependencyGroups": {
     "net10.0": [
       "BlazeEngine >= 1.0.0",
+      "ImGui.NET.Docking >= 1.75.0",
       "YamlDotNet >= 16.3.0"
     ]
   },
@@ -716,6 +761,10 @@
       "net10.0": {
         "targetAlias": "net10.0",
         "dependencies": {
+          "ImGui.NET.Docking": {
+            "target": "Package",
+            "version": "[1.75.0, )"
+          },
           "YamlDotNet": {
             "target": "Package",
             "version": "[16.3.0, )"

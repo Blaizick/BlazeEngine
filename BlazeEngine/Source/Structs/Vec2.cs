@@ -69,38 +69,42 @@ public struct Vec2 : IFormattable
         return new Vec2(a.X * b, a.Y * b);
     }
 
-    public static implicit operator Vec2(Vector4 v)
+    public static implicit operator Vec2(in Vector4 v)
     {
         return new (v.X, v.Y);
     }
-    public static implicit operator Vector4(Vec2 v)
+    public static implicit operator Vector4(in Vec2 v)
     {
         return new (v.X, v.Y, 0.0f, 1.0f);
     }
 
-    public static implicit operator Vector2(Vec2 v)
-    {
-        return new (v.X, v.Y);
-    }
-
-    public static implicit operator System.Numerics.Vector2(Vec2 v)
+    public static implicit operator System.Numerics.Vector2(in Vec2 v)
     {
         return new(v.X, v.Y);
     }
-    public static implicit operator Vec2(System.Numerics.Vector2 v)
+    public static implicit operator Vec2(in System.Numerics.Vector2 v)
     {
         return new(v.X, v.Y);
     }
 
-    public static implicit operator Microsoft.Xna.Framework.Vector2(Vec2 v)
+    public static implicit operator Microsoft.Xna.Framework.Vector2(in Vec2 v)
     {
         return new(v.X, v.Y);
     }
-    public static implicit operator Vec2(Microsoft.Xna.Framework.Vector2 v)
+    public static implicit operator Vec2(in Microsoft.Xna.Framework.Vector2 v)
     {
         return new(v.X, v.Y);
     }
 
+    public static implicit operator OpenTK.Mathematics.Vector2(in Vec2 v)
+    {
+        return new OpenTK.Mathematics.Vector2(v.X, v.Y);
+    }
+    public static implicit operator Vec2(in OpenTK.Mathematics.Vector2 v)
+    {
+        return new Vec2(v.X, v.Y);
+    }
+    
     public static Vec2 MoveTowards(Vec2 start, Vec2 target, float maxDistanceDelta)
     {
         Vec2 dir = target - start;

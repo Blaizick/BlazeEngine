@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jSk+YoIibq4=",
+  "dgSpecHash": "hTAa13ukhdc=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj",
+  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\novik\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",

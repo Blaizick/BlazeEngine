@@ -116,9 +116,9 @@ public class Player
     
     public void Draw()
     {
-        BlazeEngine.Draw.Color = Color.White;
-        BlazeEngine.Draw.sprite = Sprites.player0;
-        BlazeEngine.Draw.Sprite(position.X, position.Y, 1, 1, rotation);
+        BlazeEngine.Drawf.Color = Color.White;
+        BlazeEngine.Drawf.sprite = Sprites.player0;
+        BlazeEngine.Drawf.Sprite(position.X, position.Y, 1, 1, rotation);
     }
 }
 
@@ -288,9 +288,9 @@ public class Asteroid
 
     public void Draw()
     {
-        BlazeEngine.Draw.Color = Color.White;
-        BlazeEngine.Draw.sprite = sprite;
-        BlazeEngine.Draw.Sprite(position.X, position.Y, size, size, rotation);
+        BlazeEngine.Drawf.Color = Color.White;
+        BlazeEngine.Drawf.sprite = sprite;
+        BlazeEngine.Drawf.Sprite(position.X, position.Y, size, size, rotation);
     }
 }
 

@@ -22,7 +22,7 @@ public class Graphics
         colorBatch.Init();
         SpriteBatch spriteBatch = new(batcher, buffers);
         spriteBatch.Init();
-        Draw.Construct(buffers, batcher, colorBatch, spriteBatch);
+        Drawf.Construct(buffers, batcher, colorBatch, spriteBatch);
     }
 }
 
@@ -121,7 +121,7 @@ public class Shader
     }
 }
 
-public static class Draw
+public static class Drawf
 {
     private static Color s_Color = Color.White;
     public static Color Color
@@ -195,20 +195,28 @@ public static class Draw
     
     public static void Construct(Buffers buffers, Batcher batcher, ColorBatch colorBatch, SpriteBatch spriteBatch)
     {
-        Draw.buffers = buffers;
-        Draw.batcher = batcher;
-        Draw.colorBatch = colorBatch;
-        Draw.spriteBatch = spriteBatch;
+        Drawf.buffers = buffers;
+        Drawf.batcher = batcher;
+        Drawf.colorBatch = colorBatch;
+        Drawf.spriteBatch = spriteBatch;
     }
 
     public static void Flush()
     {
         batcher.Flush();
     }
-    
+
+    public static void Rect(in Vec2 position, in Vec2 size)
+    {
+        colorBatch.DrawRect(position.X, position.Y, size.X, size.Y);
+    }
     public static void Rect(float x, float y, float w, float h)
     {
         colorBatch.DrawRect(x, y, w, h);
+    }
+    public static void Rect(in Vec2 position, in Vec2 size, float rotation)
+    {
+        colorBatch.DrawRect(position.X, position.Y, size.X, size.Y, rotation);
     }
     public static void Rect(float x, float y, float w, float h, float r)
     {
@@ -219,9 +227,17 @@ public static class Draw
     {
         spriteBatch.DrawSprite(x, y, w, h);
     }
+    public static void Sprite(in Vec2 position, in Vec2 size)
+    {
+        spriteBatch.DrawSprite(position.X, position.Y, size.X, size.Y);
+    }
     public static void Sprite(float x, float y, float w, float h, float r)
     {
         spriteBatch.DrawSprite(x, y, w, h, r);
+    }
+    public static void Sprite(in Vec2 position, in Vec2 size, float rotation)
+    {
+        spriteBatch.DrawSprite(position.X, position.Y, size.X, size.Y, rotation);
     }
 }
 
@@ -747,6 +763,17 @@ public class Sprite
         m_UV = Rect.FromBounds(m_Region.MinX / maxX, m_Region.MinY / maxY, 
             m_Region.MaxX / maxX, m_Region.MaxY / maxY);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsValid()
+    {
+        return m_Texture != null && m_Texture.IsValid();
+    }
+
+    public static bool IsValid(Sprite sprite)
+    {
+        return sprite != null && sprite.IsValid();
+    }
 }
 
 public class Texture
@@ -777,6 +804,12 @@ public class Texture
     {
         GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0 + init));
         GL.BindTexture(TextureTarget.Texture2d, handle);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsValid()
+    {
+        return image != null;
     }
 }
 

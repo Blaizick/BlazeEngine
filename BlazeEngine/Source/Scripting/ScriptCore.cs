@@ -29,33 +29,37 @@ public class ScriptCore
 
     public void CallInit()
     {
-        gameCore.Init();
+        if (gameCore != null)
+            gameCore.Init();
     }
     public void CallUpdate()
     {
-        gameCore.Update();
+        if (gameCore != null)
+            gameCore.Update();
     }
     public void CallDraw()
     {
-        gameCore.Draw();
+        if (gameCore != null)
+            gameCore.Draw();
     }
     public void CallQuit()
     {
-        gameCore.Quit();
+        if (gameCore != null)
+            gameCore.Quit();
     }
     public void CallPreFixedUpdate()
     {
-        if(gameCore is IFixedUpdateGameCore core)
+        if(gameCore != null && gameCore is IFixedUpdateGameCore core)
             core.PreFixedUpdate();
     }
     public void CallFixedUpdate()
     {
-        if(gameCore is IFixedUpdateGameCore core)
+        if(gameCore != null && gameCore is IFixedUpdateGameCore core)
             core.FixedUpdate();
     }
     public void CallPostFixedUpdate()
     {
-        if(gameCore is IFixedUpdateGameCore core)
+        if(gameCore != null && gameCore is IFixedUpdateGameCore core)
             core.PostFixedUpdate();
     }
 }

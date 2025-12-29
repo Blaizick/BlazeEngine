@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\BlazeBootstrap.csproj": {}
+    "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\BlazeBootstrap.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\BlazeBootstrap.csproj": {
+    "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\BlazeBootstrap.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\BlazeBootstrap.csproj",
+        "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\BlazeBootstrap.csproj",
         "projectName": "BlazeBootstrap",
-        "projectPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\BlazeBootstrap.csproj",
+        "projectPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\BlazeBootstrap.csproj",
         "packagesPath": "C:\\Users\\novik\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\obj\\",
+        "outputPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\novik\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj": {
-                "projectPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj"
+              "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj": {
+                "projectPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj"
               }
             }
           }
@@ -343,14 +343,14 @@
         }
       }
     },
-    "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj": {
+    "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj",
+        "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj",
         "projectName": "BlazeEngine",
-        "projectPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj",
+        "projectPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj",
         "packagesPath": "C:\\Users\\novik\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\obj\\",
+        "outputPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\novik\\AppData\\Roaming\\NuGet\\NuGet.Config",

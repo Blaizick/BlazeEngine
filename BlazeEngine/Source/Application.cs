@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using BlazeEngine.UI;
+using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
@@ -12,13 +13,15 @@ public unsafe class Application
     public ScriptCore scriptCore;
     public InputCore inputCore;
     public PhysicsCore physicsCore;
+    public UICore uiCore;
     
-    public Application(WindowInstance window, ScriptCore scriptCore, InputCore inputCore, PhysicsCore physicsCore)
+    public Application(WindowInstance window, ScriptCore scriptCore, InputCore inputCore, PhysicsCore physicsCore, UICore uiCore)
     {
         this.window = window;
         this.scriptCore = scriptCore;
         this.inputCore = inputCore;
         this.physicsCore = physicsCore;
+        this.uiCore = uiCore;
     }
     
     public void Init()
@@ -73,6 +76,7 @@ public unsafe class Application
                 inputCore.TryProcessEvent(e);
             }
             
+            uiCore.Update();
             scriptCore.CallUpdate();
 
             if (Time.TimeSinceLastFixedUpdate > Physics.FixedUpdateDelay)
@@ -85,9 +89,11 @@ public unsafe class Application
             }
             
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            Draw.ProjView = Camera.main.ProjView;
+            Drawf.ProjView = Camera.main.ProjView;
             scriptCore.CallDraw();
-            Draw.Flush();
+            uiCore.Draw();
+            Drawf.Flush();
+
             SDL3.SDL_GL_SwapWindow(window.sdlWindow);
 
             inputCore.LateUpdate();

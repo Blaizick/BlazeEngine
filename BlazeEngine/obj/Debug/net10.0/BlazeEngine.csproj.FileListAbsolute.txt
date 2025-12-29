@@ -11,3 +11,16 @@ D:\Projects\BlazeEngineCs\BlazeEngine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.
 D:\Projects\BlazeEngineCs\BlazeEngine\BlazeEngine\obj\Debug\net10.0\refint\BlazeEngine.dll
 D:\Projects\BlazeEngineCs\BlazeEngine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.pdb
 D:\Projects\BlazeEngineCs\BlazeEngine\BlazeEngine\obj\Debug\net10.0\ref\BlazeEngine.dll
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\bin\Debug\net10.0\BlazeEngine.deps.json
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\bin\Debug\net10.0\BlazeEngine.dll
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\bin\Debug\net10.0\BlazeEngine.pdb
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.csproj.AssemblyReference.cache
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.AssemblyInfoInputs.cache
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.AssemblyInfo.cs
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.csproj.CoreCompileInputs.cache
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.sourcelink.json
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.dll
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\refint\BlazeEngine.dll
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.pdb
+D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\ref\BlazeEngine.dll

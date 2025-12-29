@@ -1,4 +1,5 @@
-﻿using SDL;
+﻿using BlazeEngine.UI;
+using SDL;
 
 namespace BlazeEngine;
 
@@ -10,6 +11,7 @@ public static class Core
     public static Graphics graphics;
     public static InputCore inputCore;
     public static PhysicsCore physicsCore;
+    public static UICore uiCore;
     
     public static void Init()
     {
@@ -20,7 +22,8 @@ public static class Core
         window = new();
         scriptCore = new();
         physicsCore = new();
-        application = new(window, scriptCore, inputCore, physicsCore);
+        uiCore = new(window);
+        application = new(window, scriptCore, inputCore, physicsCore, uiCore);
         graphics = new();
         
         Random.Init();
@@ -33,6 +36,8 @@ public static class Core
         graphics.Init();
         Camera.Construct(window);
         Camera.Init();
+        uiCore.Init();
+        UI.UI.Construct(uiCore);
         scriptCore.CallInit();
         
         application.Loop();

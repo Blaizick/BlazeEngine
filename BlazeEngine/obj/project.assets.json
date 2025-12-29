@@ -654,11 +654,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj",
+      "projectUniqueName": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj",
       "projectName": "BlazeEngine",
-      "projectPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\BlazeEngine.csproj",
+      "projectPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\BlazeEngine.csproj",
       "packagesPath": "C:\\Users\\novik\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEngine\\obj\\",
+      "outputPath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEngine\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\novik\\AppData\\Roaming\\NuGet\\NuGet.Config",

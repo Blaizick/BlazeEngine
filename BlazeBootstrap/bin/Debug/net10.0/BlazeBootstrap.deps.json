@@ -8,8 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "BlazeBootstrap/1.0.0": {
         "dependencies": {
-          "BlazeEngine": "1.0.0",
-          "YamlDotNet": "16.3.0"
+          "BlazeEngine": "1.0.0"
         },
         "runtime": {
           "BlazeBootstrap.dll": {}

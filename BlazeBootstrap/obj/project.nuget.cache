@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/EfkmWdkUy4=",
+  "dgSpecHash": "oPlwfbFUJ0Q=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeBootstrap\\BlazeBootstrap.csproj",
+  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeBootstrap\\BlazeBootstrap.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\novik\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",

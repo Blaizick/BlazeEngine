@@ -9,11 +9,18 @@ public class Seq<T> : IEnumerable<T>
     private T[] m_Items;
     private int m_Count;
 
+    public bool ordered = true;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Seq()
     {
         m_Items = new T[0];
         m_Count = 0;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Seq(bool ordered) : this()
+    {
+        this.ordered = ordered;
     }
 
     public T[] Items => m_Items;
@@ -84,6 +91,42 @@ public class Seq<T> : IEnumerable<T>
     public void Clear()
     {
         Resize(0);
+    }
+
+    /// <summary>
+    /// Returns index of element, if not found returns -1
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int IndexOf(in T item)
+    {
+        for (int i = 0; i < m_Count; i++)
+        {
+            if (EqualityComparer<T>.Default.Equals(m_Items[i], item))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RemoveAt(int id)
+    {
+        if (ordered)
+        {
+            for (int i = id + 1; i < m_Count; i++)
+            {
+                m_Items[id - 1] = m_Items[i];
+            }
+            m_Count--;
+        }
+        else
+        {
+            m_Items[id] = m_Items[--m_Count];
+            m_Items[m_Count] = default!;
+        }
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
