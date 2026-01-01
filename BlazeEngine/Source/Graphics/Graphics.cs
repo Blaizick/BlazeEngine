@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using BlazeEngine.ResourcesManagement;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using StbImageSharp;
 
 namespace BlazeEngine;
 
@@ -750,7 +750,7 @@ public class Sprite
         Region = RectInt.FromBounds(0, 0, texture.image.size.X, texture.image.size.Y);
     }
 
-    public Sprite(string path) : this(new Texture(new Image(path)))
+    public Sprite(string path) : this(new Texture(Image.LoadFromFile(path)))
     {
         
     }
@@ -810,22 +810,5 @@ public class Texture
     public bool IsValid()
     {
         return image != null;
-    }
-}
-
-public class Image
-{
-    public Vec2Int size;
-    public byte[] data;
-
-    public Image(string path)
-    {
-        StbImage.stbi_set_flip_vertically_on_load(1);
-        using (var stream = File.Open(path, FileMode.Open))
-        {
-            var stbImage = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            size = new Vec2Int(stbImage.Width, stbImage.Height);
-            data = stbImage.Data;
-        }
     }
 }

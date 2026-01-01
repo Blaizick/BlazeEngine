@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "9kmb9C7zuFE=",
+  "dgSpecHash": "eTkEFbAvAqY=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\BlazeEngine\\BlazeEnvironment\\BlazeEnvironment.csproj",
+  "projectFilePath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEnvironment\\BlazeEnvironment.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\novik\\.nuget\\packages\\imgui.net.docking\\1.75.0\\imgui.net.docking.1.75.0.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\opentk\\5.0.0-pre.15\\opentk.5.0.0-pre.15.nupkg.sha512",

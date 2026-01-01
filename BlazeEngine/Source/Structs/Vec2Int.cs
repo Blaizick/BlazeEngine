@@ -27,4 +27,6 @@ public unsafe struct Vec2Int
     {
         return new Vec2(v.X, v.Y);
     }
+    
+    public static readonly Vec2Int Zero = new Vec2Int(0, 0);
 }

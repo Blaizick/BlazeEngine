@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlazeEngine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5629bd80327e236986b4fb032b2134ba7eca2077")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+500eb3ddaa21b8ac62b27efee6b97230dca18caa")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlazeEngine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlazeEngine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

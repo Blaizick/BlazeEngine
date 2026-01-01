@@ -24,3 +24,12 @@ D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.
 D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\refint\BlazeEngine.dll
 D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\BlazeEngine.pdb
 D:\Projects\BlazeEngineCs\Test\Engine\BlazeEngine\obj\Debug\net10.0\ref\BlazeEngine.dll
+D:\Tmp\Project6\Build\BlazeEngine.deps.json
+D:\Tmp\Project6\Build\BlazeEngine.dll
+D:\Tmp\Project6\Build\BlazeEngine.pdb
+D:\Tmp\Project9\Build\BlazeEngine.deps.json
+D:\Tmp\Project9\Build\BlazeEngine.dll
+D:\Tmp\Project9\Build\BlazeEngine.pdb
+D:\Tmp\Project10\Build\BlazeEngine.deps.json
+D:\Tmp\Project10\Build\BlazeEngine.dll
+D:\Tmp\Project10\Build\BlazeEngine.pdb

@@ -43,9 +43,8 @@ public class Seq<T> : IEnumerable<T>
     public void EnsureCapacity(int capacity)
     {
         int newSize = Math.Max(1, m_Items.Length);
-        do {
+        while (newSize < capacity)
             newSize *= 2;
-        } while (newSize < capacity);
         Array.Resize(ref m_Items, newSize);
     }
 

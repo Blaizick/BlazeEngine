@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using SDL;
 
-namespace BlazeEngine.UI;
+namespace BlazeEngine.UIManagement;
 
 public class UICore
 {
@@ -161,7 +161,7 @@ public class UIElement
         set => m_Size = value;
     }
     
-    protected List<UIElement> m_Children = new();
+    protected Seq<UIElement> m_Children = new();
     protected UIElement? m_Parent = null;
     
     public virtual void Init() {}
@@ -361,8 +361,3 @@ public class Table : UIElement
         return this;
     }
 }
-
-//UI.MainCanvas.Button("btn", () => {
-//  Console.WriteLine("Button clicked");
-//});
-//UI.MainCanvas.Image(Sprites.Placeholder);

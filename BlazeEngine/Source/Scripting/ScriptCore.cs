@@ -66,7 +66,8 @@ public class ScriptCore
 
 public class RuntimeData
 {
-    public const string RuntimeDataPath = "./RuntimeData.yaml";
+    public const string RuntimeDataFileName = "RuntimeData.yaml";
+    public static readonly string RuntimeDataPath = Path.Combine(".", RuntimeDataFileName);
     
     public string assemblyPath;
 }

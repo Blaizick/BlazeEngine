@@ -1,4 +1,4 @@
-﻿using BlazeEngine.UI;
+﻿using BlazeEngine.UIManagement;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;

@@ -49,10 +49,12 @@ public class ConsoleLogger : ILogger
     }
     public void LogError(string error)
     {
-        Console.WriteLine($"[Error] {error}");
+        string prefix = string.IsNullOrEmpty(error) ? "[Error]" : string.Empty;
+        Console.WriteLine(prefix + error);
     }
     public void LogWarning(string warning)
     {
-        Console.WriteLine($"[Warning] {warning}");
+        string prefix = string.IsNullOrEmpty(warning) ? "[Warning]" : string.Empty;
+        Console.WriteLine(prefix + warning);
     }
 }
