@@ -125,3 +125,8 @@ D:\Tmp\Project10\Build\BlazeBootstrap.deps.json
 D:\Tmp\Project10\Build\BlazeBootstrap.runtimeconfig.json
 D:\Tmp\Project10\Build\BlazeBootstrap.dll
 D:\Tmp\Project10\Build\BlazeBootstrap.pdb
+D:\Tmp\Project1\Build\BlazeBootstrap.exe
+D:\Tmp\Project1\Build\BlazeBootstrap.deps.json
+D:\Tmp\Project1\Build\BlazeBootstrap.runtimeconfig.json
+D:\Tmp\Project1\Build\BlazeBootstrap.dll
+D:\Tmp\Project1\Build\BlazeBootstrap.pdb

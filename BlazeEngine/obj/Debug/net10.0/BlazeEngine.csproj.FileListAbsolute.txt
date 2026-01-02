@@ -33,3 +33,6 @@ D:\Tmp\Project9\Build\BlazeEngine.pdb
 D:\Tmp\Project10\Build\BlazeEngine.deps.json
 D:\Tmp\Project10\Build\BlazeEngine.dll
 D:\Tmp\Project10\Build\BlazeEngine.pdb
+D:\Tmp\Project1\Build\BlazeEngine.deps.json
+D:\Tmp\Project1\Build\BlazeEngine.dll
+D:\Tmp\Project1\Build\BlazeEngine.pdb

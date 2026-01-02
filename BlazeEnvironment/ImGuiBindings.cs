@@ -41,6 +41,10 @@ public unsafe class ImGui
     {
         return InputText(label, buffer, buffer.Capacity);
     }
+    [DllImport("ImGui.dll", CharSet = CharSet.Ansi, EntryPoint = "ImGui_InputFloat")]
+    public static extern bool InputFloat(string label, ref float v, float step = 0.0f, float step_fast = 0.0f, string format = "%.3f", int flags = 0);
+    [DllImport("ImGui.dll", CharSet = CharSet.Ansi, EntryPoint = "ImGui_InputInt")]
+    public static extern bool InputInt(string label, ref int v, int step = 0, int step_fast = 0, int flags = 0);
     
     [DllImport("ImGui.dll", EntryPoint = "ImGui_PushStringId")]
     public static extern bool PushId(string id);
@@ -102,7 +106,38 @@ public unsafe class ImGui
     
     [DllImport("ImGui.dll", EntryPoint = "ImGui_BeginCustomMainDockspace")]
     public static extern bool BeginCustomMainDockspace();
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_BeginPopupContextItem")]
+    public static extern bool BeginPopupContextItem(string str_id = "", int popup_flags = 1);
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_BeginPopupContextWindow")]
+    public static extern bool BeginPopupContextWindow(string str_id = "", int popup_flags = 1);
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_BeginPopupContextVoid")]
+    public static extern bool BeginPopupContextVoid(string str_id = "", int popup_flags = 1);
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_EndPopup")]
+    public static extern void EndPopup();
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_BeginPopup")]
+    public static extern bool BeginPopup(string str_id, int flags = 0);
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_OpenPopup")]
+    public static extern bool OpenPopup(string str_id, int flags = 0);
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_TreeNode")]
+    public static extern bool TreeNode(string label);
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_PopTree")]
+    public static extern void PopTree();
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_CollapsingHeader")]
+    public static extern bool CollapsingHeader(string label, int flags);
 
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_Columns")]
+    public static extern bool Columns(int count, string id = null!, bool borders = true);
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_NextColumn")]
+    public static extern bool NextColumn();
+    
+    [DllImport("ImGui.dll", EntryPoint = "ImGui_Checkbox")]
+    public static extern bool Checkbox(string label, ref bool v);
 }
 
 public enum ImGuiTableFlags : int

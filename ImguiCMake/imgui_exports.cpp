@@ -24,16 +24,15 @@ public:
 
 static ImGuiContext imguiContext;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _WIN32
 #define API __declspec(dllexport)
 #else
 #define API
 #endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 API void ImGui_Init(){
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
@@ -128,8 +127,11 @@ API bool ImGui_ButtonWithSize(const char* label, float width, float height){
 API bool ImGui_InputText(const char* label, char* buffer, int bufferSize){
     return ImGui::InputText(label, buffer, bufferSize);
 }
-API bool ImGui_InputFloat(const char* label, float* value){
-    return ImGui::InputFloat(label, value);
+API bool ImGui_InputFloat(const char* label, float* v, float step, float step_fast, const char* format, ImGuiInputTextFlags flags){
+    return ImGui::InputFloat(label, v, step, step_fast, format, flags);
+}
+API bool ImGui_InputInt(const char* label, int* v, int step, int step_fast, ImGuiInputTextFlags flags){
+    return ImGui::InputInt(label, v, step, step_fast, flags);
 }
 
 API bool ImGui_BeginTable(const char* id, int columns, int flags){
@@ -235,6 +237,50 @@ API void ImGui_BeginCustomMainDockspace(){
         {0, 0},
         ImGuiDockNodeFlags_PassthruCentralNode
     );
+}
+
+API bool ImGui_BeginPopupContextItem(const char* str_id = NULL, ImGuiPopupFlags popup_flags = 1){
+    return ImGui::BeginPopupContextItem(str_id, popup_flags);
+}
+API bool ImGui_BeginPopupContextWindow(const char* str_id = NULL, ImGuiPopupFlags popup_flags = 1){
+    return ImGui::BeginPopupContextWindow(str_id, popup_flags);
+}
+API bool ImGui_BeginPopupContextVoid(const char* str_id = NULL, ImGuiPopupFlags popup_flags = 1){
+    return ImGui::BeginPopupContextVoid(str_id, popup_flags);
+}
+
+API void ImGui_EndPopup(){
+    ImGui::EndPopup();
+}
+
+API bool ImGui_BeginPopup(const char* str_id, ImGuiWindowFlags flags = 0){
+    return ImGui::BeginPopup(str_id, flags);
+}
+API void ImGui_OpenPopup(const char* str_id, ImGuiPopupFlags popup_flags = 0){
+    ImGui::OpenPopup(str_id, popup_flags);
+}
+
+API bool ImGui_TreeNode(const char* label){
+    return ImGui::TreeNode(label);
+}
+API void ImGui_PopTree(){
+    return ImGui::TreePop();
+}
+
+API bool ImGui_CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags){
+    return ImGui::CollapsingHeader(label, flags);
+}
+
+
+API void ImGui_Columns(int count, const char* id, bool borders){
+    ImGui::Columns(count, id, borders);
+}
+API void ImGui_NextColumn(){
+    ImGui::NextColumn();
+}
+
+API bool ImGui_Checkbox(const char* label, bool* v){
+    return ImGui::Checkbox(label, v);
 }
 
 #ifdef __cplusplus

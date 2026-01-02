@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlazeBootstrap")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+500eb3ddaa21b8ac62b27efee6b97230dca18caa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+652ae706bfd2b71d68dddbb4ad4bbd939c8e4517")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlazeBootstrap")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlazeBootstrap")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -23,10 +23,10 @@ public class ResourcesCore
         };
     }
 
-    public T? Load<T>(string _path)
+    public T Load<T>(string _path)
     {
         string path = Path.Combine(resourcesRootDirectory, _path);
-        return resourceLoadersDic.TryGetValue(typeof(T), out var loader) ? ((IResourceLoader<T>)loader).LoadFromFile(path) : default;
+        return resourceLoadersDic.TryGetValue(typeof(T), out var loader) ? ((IResourceLoader<T>)loader).LoadFromFile(path) : default!;
     }
 }
 

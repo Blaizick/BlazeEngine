@@ -1,12 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using BlazeEngine;
-using System.Windows.Forms;
-using BlazeEngine.ResourcesManagement;
-using BlazeEngine.Utils;
-using SDL;
-using VelcroPhysics.Dynamics.Joints;
 using Debug = BlazeEngine.Debug;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BlazeEnvironment;
 
@@ -31,48 +26,6 @@ public static class SystemUtils
     }
 }
 
-public class ProjectOpenSystem
-{
-    public ProjectInfoSystem projectInfoSystem;
-    public ProjectMetaSystem projectMetaSystem;
-
-    public string projectRootDirPath;
-
-    public ProjectOpenSystem(ProjectInfoSystem projectInfoSystem, ProjectMetaSystem projectMetaSystem)
-    {
-        this.projectInfoSystem = projectInfoSystem;
-        this.projectMetaSystem = projectMetaSystem;
-    }
-    
-    public void Open()
-    {
-        projectInfoSystem.Load(projectRootDirPath);
-        projectMetaSystem.Load();
-    }
-}
-
-public class ProjectOpenDialog
-{
-    public ProjectOpenSystem projectOpenSystem;
-
-    public ProjectOpenDialog(ProjectOpenSystem projectOpenSystem)
-    {
-        this.projectOpenSystem = projectOpenSystem;
-    }
-    
-    public void Show()
-    {
-        using (FolderBrowserDialog fbd = new())
-        {
-            if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(fbd.SelectedPath))
-            {
-                projectOpenSystem.projectRootDirPath = fbd.SelectedPath;
-                projectOpenSystem.Open();
-            }
-        }
-    }
-}
-
 
 public static class Program
 {
@@ -82,65 +35,133 @@ public static class Program
         Debug.Construct(new ConsoleLogger());
         YAML.Init();
 
-        ProjectInfoData projectInfoData = new();
-        ProjectInfoSystem projectInfoSystem = new(projectInfoData);
+        var services = new ServiceCollection();
 
-        ProjectMetaData projectMetaData = new();
-        ProjectMetaSystem projectMetaSystem = new(projectMetaData, projectInfoSystem);
+        services.AddSingleton<ProjectInfoData>();
+        services.AddSingleton<ProjectMetaData>();
         
-        EnvironmentPrefsSystem environmentPrefsSystem = new();
-        environmentPrefsSystem.Init();
-        EnvironmentPrefsWindow environmentPrefsWindow = new(environmentPrefsSystem);
+        services.AddSingleton<ProjectInfoSystem>();
+        services.AddSingleton<ProjectMetaSystem>();
         
-        ProjectCreateSystem projectCreateSystem = new(environmentPrefsSystem, projectInfoSystem, projectMetaSystem);
-        ProjectCreateDialog projectCreateDialog = new(projectCreateSystem);
+        services.AddSingleton<EnvironmentPrefsSystem>(p =>
+        {
+            var sys = new EnvironmentPrefsSystem();
+            sys.Init();
+            return sys;
+        });
+        services.AddSingleton<EnvironmentPrefsWindow>();
 
-        ProjectOpenSystem projectOpenSystem = new(projectInfoSystem, projectMetaSystem);
-        ProjectOpenDialog projectOpenDialog = new(projectOpenSystem);
+        services.AddSingleton<ProjectCreateSystem>();
+        services.AddSingleton<ProjectCreateDialog>();
+        
+        services.AddSingleton<ProjectOpenSystem>();
+        services.AddSingleton<ProjectOpenDialog>();
+        
+        services.AddSingleton<ProjectBuildSystem>();
+        services.AddSingleton<ProjectBuildWindow>();
+        
+        services.AddSingleton<AssemblySystem>();
+        
+        services.AddSingleton<CmsEntityWindow>();
+        services.AddSingleton<CmsWindow>();
+        
+        services.AddSingleton<Main>();
 
-        ProjectBuildSystem projectBuildSystem = new(projectMetaSystem, projectInfoSystem);
-        ProjectBuildWindow projectBuildWindow = new(projectBuildSystem);
+        var provider = services.BuildServiceProvider();
+        
+        Main main = provider.GetRequiredService<Main>();
         
         ImGui.Init();
         while (ImGui.IsRunning())
         {
             ImGui.PreDraw();
+            main.Display();
+            ImGui.PostDraw();
+        }
+    }
+}
 
-            ImGui.BeginCustomMainDockspace();
-            ImGui.End();
+public class Main
+{
+    public CmsWindow cmsWindow;
+    public CmsEntityWindow cmsEntityWindow;
+    
+    public ProjectCreateDialog projectCreateDialog;
+    public ProjectOpenDialog projectOpenDialog;
+    
+    public ProjectBuildWindow projectBuildWindow;
+
+    public EnvironmentPrefsWindow environmentPrefsWindow;
+
+    public Main(CmsWindow cmsWindow,
+        CmsEntityWindow cmsEntityWindow,
+        ProjectCreateDialog projectCreateDialog,
+        ProjectOpenDialog projectOpenDialog,
+        ProjectBuildWindow projectBuildWindow,
+        EnvironmentPrefsWindow environmentPrefsWindow)
+    {
+        this.cmsWindow = cmsWindow;
+        this.cmsEntityWindow = cmsEntityWindow;
+        
+        this.projectCreateDialog = projectCreateDialog;
+        this.projectOpenDialog = projectOpenDialog;
+        
+        this.projectBuildWindow = projectBuildWindow;
+        
+        this.environmentPrefsWindow = environmentPrefsWindow;
+    }
+    
+    public void Display()
+    {
+        ImGui.BeginCustomMainDockspace();
+        ImGui.End();
+        
+        cmsWindow.Display();
+        cmsEntityWindow.Display();
             
-            projectCreateDialog.Display();
-            environmentPrefsWindow.Display();
-            projectBuildWindow.Display();
+        projectCreateDialog.Display();
+        environmentPrefsWindow.Display();
+        projectBuildWindow.Display();
             
-            if (ImGui.BeginMainMenuBar())
+        if (ImGui.BeginMainMenuBar())
+        {
+            if (ImGui.BeginMenu("File"))
             {
-                if (ImGui.BeginMenu("File"))
+                if (ImGui.MenuItem("New Project"))
                 {
-                    if (ImGui.MenuItem("New Project"))
-                    {
-                        projectCreateDialog.active = true;
-                    }
-                    if (ImGui.MenuItem("Open Project"))
-                    {
-                         projectOpenDialog.Show();
-                    }
-                    if (ImGui.MenuItem("Settings"))
-                    {
-                        environmentPrefsWindow.active = true;
-                    }
-                    if (ImGui.MenuItem("Build"))
-                    {
-                        projectBuildWindow.active = true;
-                    }
-                 
-                    ImGui.EndMenu();
+                    projectCreateDialog.active = true;
                 }
-                
-                ImGui.EndMainMenuBar();
+                if (ImGui.MenuItem("Open Project"))
+                {
+                    projectOpenDialog.Show();
+                }
+                if (ImGui.MenuItem("Settings"))
+                {
+                    environmentPrefsWindow.active = true;
+                }
+                if (ImGui.MenuItem("Build"))
+                {
+                    projectBuildWindow.active = true;
+                }
+                 
+                ImGui.EndMenu();
             }
 
-            ImGui.PostDraw();
+            if (ImGui.BeginMenu("Window"))
+            {
+                if (ImGui.Checkbox("Cms Window", ref cmsWindow.active))
+                {
+                    
+                }
+                if (ImGui.Checkbox("Cms Entity Window", ref cmsEntityWindow.active))
+                {
+                    
+                }
+                
+                ImGui.EndMenu();
+            }
+                
+            ImGui.EndMainMenuBar();
         }
     }
 }

@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "eTkEFbAvAqY=",
+  "dgSpecHash": "LS8/z7kmo7c=",
   "success": true,
   "projectFilePath": "D:\\Projects\\BlazeEngineCs\\Test\\Engine\\BlazeEnvironment\\BlazeEnvironment.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\novik\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\10.0.1\\microsoft.extensions.dependencyinjection.10.0.1.nupkg.sha512",
+    "C:\\Users\\novik\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.1\\microsoft.extensions.dependencyinjection.abstractions.10.0.1.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\novik\\.nuget\\packages\\opentk\\5.0.0-pre.15\\opentk.5.0.0-pre.15.nupkg.sha512",

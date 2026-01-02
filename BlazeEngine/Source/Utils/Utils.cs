@@ -4,6 +4,12 @@ public static class FileUtils
 {
     public static void CopyDirectory(string source, string destination)
     {
+        if (!Directory.Exists(source))
+        {
+            Debug.LogError($"Directory {source} does not exist");
+            return;
+        }
+        
         Directory.CreateDirectory(destination);
         foreach (var filePath in Directory.GetFiles(source))
         {

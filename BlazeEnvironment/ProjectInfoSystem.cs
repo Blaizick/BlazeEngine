@@ -13,6 +13,8 @@ public class ProjectInfoSystem
 {
     public ProjectInfoData projectInfo;
 
+    public event Action onLoad;
+    
     public ProjectInfoSystem(ProjectInfoData projectInfo)
     {
         this.projectInfo = projectInfo;
@@ -24,10 +26,16 @@ public class ProjectInfoSystem
         YAML.SerializeToFile(path, projectInfo);
     }
 
-    public void Load(string projectRoot)
+    public bool Load(string projectRoot)
     {
         var path = Path.Combine(projectRoot, ProjectInfoData.DefaultFileName);
-        projectInfo = YAML.DeserializeFromFile<ProjectInfoData>(path);
+        if (File.Exists(path))
+        {
+            projectInfo = YAML.DeserializeFromFile<ProjectInfoData>(path);
+            onLoad?.Invoke();
+            return true;
+        }
+        return false;
     }
 }
 

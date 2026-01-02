@@ -21,9 +21,16 @@ public static class YAML
     }
     public static void SerializeToFile<T>(string path, in T obj)
     {
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.LogError("Path is null or empty");
+            return;
+        }
         var dir = Path.GetDirectoryName(path);
-        if (dir != null && !Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir!);
+        }
         File.WriteAllText(path, Serialize(obj));
     }
     

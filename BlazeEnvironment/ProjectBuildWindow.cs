@@ -20,7 +20,7 @@ public class ProjectBuildSystem
 
     public void Build()
     {
-        string buildDir = Path.Combine(projectInfoSystem.projectInfo.projectRoot, DefaultBuildDirectoryName);
+        string buildDir = GetBuildDirectory();
         Directory.CreateDirectory(buildDir);
         
         SystemUtils.System("dotnet", 
@@ -34,6 +34,11 @@ public class ProjectBuildSystem
             FileUtils.CopyDirectory(Path.Combine(projectInfoSystem.projectInfo.projectRoot, projectMetaSystem.projectMeta.resourcesRootDirectory), 
                 Path.Combine(buildDir, ResourcesCore.DefaultRootDirectory));    
         }
+    }
+
+    public string GetBuildDirectory()
+    {
+        return Path.Combine(projectInfoSystem.projectInfo.projectRoot, DefaultBuildDirectoryName);
     }
 
     public void Clean()
@@ -77,7 +82,7 @@ public class ProjectBuildWindow
             {
                 if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(fbd.SelectedPath))
                 {
-                    projectBuildSystem.projectMetaSystem.projectMeta.resourcesRootDirectory = fbd.SelectedPath;
+                    projectBuildSystem.projectMetaSystem.projectMeta.resourcesRootDirectory = Path.GetRelativePath(projectBuildSystem.projectInfoSystem.projectInfo.projectRoot, fbd.SelectedPath);
                     projectBuildSystem.projectMetaSystem.Save();
                 }
             }
