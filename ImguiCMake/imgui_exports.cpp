@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "SDL3/SDL.h"
 #include "SDL3/SDL_opengl.h"
@@ -282,6 +283,31 @@ API void ImGui_NextColumn(){
 API bool ImGui_Checkbox(const char* label, bool* v){
     return ImGui::Checkbox(label, v);
 }
+
+API bool ImGui_IsKeyPressed(ImGuiKey key, bool repeat){
+    return ImGui::IsKeyPressed(key, repeat);
+}
+API bool ImGui_IsKeyDown(ImGuiKey key){
+    return ImGui::IsKeyDown(key);
+}
+API bool ImGui_IsKeyReleased(ImGuiKey key){
+    return ImGui::IsKeyReleased(key);
+}
+
+API bool ImGui_IsMouseDown(ImGuiMouseButton button){
+    return ImGui::IsMouseDown(button);
+}
+API bool ImGui_IsMouseReleased(ImGuiMouseButton button){
+    return ImGui::IsMouseReleased(button);
+}
+API bool ImGui_IsMouseClicked(ImGuiMouseButton button, bool repeat){
+    return ImGui::IsMouseClicked(button, repeat);
+}
+
+API void ImGui_SetKeyboardFocusHere(int offset){
+    ImGui::SetKeyboardFocusHere();
+}
+
 
 #ifdef __cplusplus
 }

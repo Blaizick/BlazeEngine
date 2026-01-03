@@ -34,7 +34,7 @@ public static class Program
     {
         Debug.Construct(new ConsoleLogger());
         YAML.Init();
-
+        
         var services = new ServiceCollection();
 
         services.AddSingleton<ProjectInfoData>();
@@ -62,7 +62,10 @@ public static class Program
         
         services.AddSingleton<AssemblySystem>();
         
+        services.AddSingleton<CmsEntitySystem>();
         services.AddSingleton<CmsEntityWindow>();
+
+        services.AddSingleton<CmsSystem>();
         services.AddSingleton<CmsWindow>();
         
         services.AddSingleton<Main>();
@@ -93,13 +96,15 @@ public class Main
 
     public EnvironmentPrefsWindow environmentPrefsWindow;
 
-    public Main(CmsWindow cmsWindow,
+    public Main(
+        CmsWindow cmsWindow,
         CmsEntityWindow cmsEntityWindow,
         ProjectCreateDialog projectCreateDialog,
         ProjectOpenDialog projectOpenDialog,
         ProjectBuildWindow projectBuildWindow,
         EnvironmentPrefsWindow environmentPrefsWindow)
     {
+        
         this.cmsWindow = cmsWindow;
         this.cmsEntityWindow = cmsEntityWindow;
         

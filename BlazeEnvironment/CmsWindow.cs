@@ -1,100 +1,11 @@
-﻿using System.CodeDom;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using BlazeEngine;
 using BlazeEngine.ResourcesManagement;
 
 namespace BlazeEnvironment;
 
-public class SerializedCmsComponent
-{
-    public string typeName = string.Empty;
-    public Dictionary<string, object> fields = new();
-
-    public SerializedCmsComponent() {}
-    public SerializedCmsComponent(Type type)
-    {
-        typeName = type.FullName;
-        foreach (var field in type.GetFields())
-        {
-            fields[field.Name] = Activator.CreateInstance(field.FieldType)!;
-        }
-    }
-    public SerializedCmsComponent(CmsComponent cmsComponent)
-    {
-        var type = cmsComponent.GetType();
-        typeName = type.FullName;
-        foreach (var field in type.GetFields())
-        {
-            fields[field.Name] = Convert.ChangeType(field.GetValue(cmsComponent), field.FieldType)!;
-        }
-    }
-
-    public CmsComponent AsCmsComponent(List<Type> cmsComponentTypes)
-    {
-        Type type = null;
-        foreach (var t in cmsComponentTypes)
-        {
-            if (t.FullName == typeName)
-            {
-                type = t;
-                break;
-            }
-        }
-        if (type == null)
-        {
-            Debug.LogError($"No type with name {typeName} found!");
-            return null!;
-        }
-        var comp = (CmsComponent)Activator.CreateInstance(type)!;
-        foreach (var field in comp.GetType().GetFields())
-        {
-            if (fields.TryGetValue(field.Name, out var obj))
-            {
-                if (field.FieldType == obj.GetType()) 
-                    field.SetValue(comp, obj);
-                else 
-                    field.SetValue(comp, Convert.ChangeType(obj, field.FieldType));
-            }
-        }
-        return comp;
-    }
-}
-
-public class SerializedCmsEntity
-{
-    public string id = string.Empty;
-    public List<SerializedCmsComponent> components = new();
-
-    public SerializedCmsEntity() {}
-    public SerializedCmsEntity(string id)
-    {
-        this.id = id;
-    }
-    public SerializedCmsEntity(CmsEntity cmsEntity)
-    {
-        id = cmsEntity.id;
-        foreach (var comp in cmsEntity.Components)
-        {
-            components.Add(new SerializedCmsComponent(comp));
-        }
-    }
-    
-    public CmsEntity AsCmsEntity(List<Type> cmsComponentTypes)
-    {
-        CmsEntity ent = Activator.CreateInstance<CmsEntity>();
-        ent.id = id;
-        foreach (var comp in components)
-        {
-            var cmsComp = comp.AsCmsComponent(cmsComponentTypes);
-            if (cmsComp != null)
-            {
-                ent.AddComponent(cmsComp);
-            }
-        }
-        return ent;
-    }
-}
+//TODO Gen
 
 public interface ISerializedFieldDrawer
 {
@@ -162,21 +73,19 @@ public class AssemblySystem
     }
 }
 
-public class CmsEntityWindow
+public class CmsEntitySystem
 {
-    public bool active = true;
-
     public CmsEntity activeCmsEntity;
     public string cmsEntityPath;
     
     public AssemblySystem assemblySystem;
+    
     public List<Type> cmsComponentTypes = new();
 
-    public Dictionary<Type, ISerializedFieldDrawer> fieldDrawers;
-    
-    public CmsEntityWindow(AssemblySystem assemblySystem)
+    public CmsEntitySystem(AssemblySystem assemblySystem)
     {
         this.assemblySystem = assemblySystem;
+        
         assemblySystem.onAssemblyLoaded += assembly =>
         {
             cmsComponentTypes = assembly.
@@ -184,6 +93,41 @@ public class CmsEntityWindow
                 Where(t => typeof(CmsComponent).IsAssignableFrom(t)).
                 ToList();
         };
+    }
+
+    public void CreateComponent(Type type)
+    {
+        activeCmsEntity.AddComponent((CmsComponent)Activator.CreateInstance(type)!);
+    }
+    
+    public void LoadCmsEntity(string path)
+    {
+        if (assemblySystem.assembly == null || !File.Exists(path))
+        {
+            return;
+        }
+        cmsEntityPath = path;
+        activeCmsEntity = YAML.DeserializeFromFile<SerializedCmsEntity>(cmsEntityPath).AsCmsEntity(cmsComponentTypes);
+    }
+
+    public void SaveCmsEntity()
+    {
+        YAML.SerializeToFile(cmsEntityPath, activeCmsEntity.AsSerializedCmsEntity());
+    }
+}
+
+public class CmsEntityWindow
+{
+    public bool active = true;
+
+    public CmsEntitySystem cmsEntitySystem;
+    
+    public Dictionary<Type, ISerializedFieldDrawer> fieldDrawers;
+    
+    public CmsEntityWindow(CmsEntitySystem cmsEntitySystem)
+    {
+        this.cmsEntitySystem = cmsEntitySystem;
+
         fieldDrawers = new()
         {
             {typeof(string), new SerializedStringDrawer()},
@@ -201,6 +145,7 @@ public class CmsEntityWindow
 
         ImGui.Begin("Cms Entity Viewer", ref active);
 
+        var activeCmsEntity = cmsEntitySystem.activeCmsEntity;
         if (activeCmsEntity != null)
         {
             StringBuilder sb = new(activeCmsEntity.id, 256);
@@ -250,6 +195,7 @@ public class CmsEntityWindow
             {
                 if (ImGui.BeginTable("Cms Component Types", 1))
                 {
+                    var cmsComponentTypes = cmsEntitySystem.cmsComponentTypes;
                     for (int i = 0; i < cmsComponentTypes.Count; i++)
                     {
                         ImGui.PushId(i);
@@ -257,7 +203,7 @@ public class CmsEntityWindow
                         ImGui.TableSetColumnIndex(0);
                         if (ImGui.Button(cmsComponentTypes[i].Name))
                         {
-                            activeCmsEntity.AddComponent((CmsComponent)Activator.CreateInstance(cmsComponentTypes[i])!);
+                            cmsEntitySystem.CreateComponent(cmsComponentTypes[i]);
                         }
                         ImGui.PopId();
                     }
@@ -270,51 +216,119 @@ public class CmsEntityWindow
 
             if (ImGui.Button("Save"))
             {
-                
-                SaveCmsEntity();
+                cmsEntitySystem.SaveCmsEntity();
             }
         }
 
         ImGui.End();
     }
-
-    public void LoadCmsEntity(string path)
-    {
-        if (assemblySystem.assembly == null || !File.Exists(path))
-        {
-            return;
-        }
-        cmsEntityPath = path;
-        Debug.Log(path);
-        activeCmsEntity = YAML.DeserializeFromFile<SerializedCmsEntity>(cmsEntityPath).AsCmsEntity(cmsComponentTypes);
-        Debug.Log(1);
-    }
-
-    public void SaveCmsEntity()
-    {
-        YAML.SerializeToFile(cmsEntityPath, new SerializedCmsEntity(activeCmsEntity));
-    }
 }
 
-public class CmsWindow
+public class CmsSystem
 {
-    public CmsEntityWindow cmsEntityWindow;
-    public AssemblySystem assemblySystem;
     public ProjectInfoSystem projectInfoSystem;
-
+    
     public string curDir = string.Empty;
     
-    public bool active = true;
-
-    public CmsWindow(CmsEntityWindow cmsEntityWindow, AssemblySystem assemblySystem, ProjectInfoSystem projectInfoSystem)
+    
+    public enum RenamingState
     {
-        this.cmsEntityWindow = cmsEntityWindow;
-        this.assemblySystem = assemblySystem;
+        None,
+        Directory,
+        File
+    };
+
+    public RenamingState renamingState;
+    public string renamingItemName;
+    public string renamingItemPath;
+    
+    public bool RenamingFile => renamingState == RenamingState.File;
+    public bool RenamingDirectory => renamingState == RenamingState.Directory;
+    
+    public CmsSystem(ProjectInfoSystem projectInfoSystem)
+    {
         this.projectInfoSystem = projectInfoSystem;
         projectInfoSystem.onLoad += () =>
         {
             curDir = Path.Combine(projectInfoSystem.projectInfo.projectRoot, projectInfoSystem.projectInfo.projectName);
         };
+    }
+
+    public void StartRenaming(string item, bool dir)
+    {
+        renamingItemPath = item;
+        renamingItemName = Path.GetFileName(item);
+        renamingState = dir ? RenamingState.Directory : RenamingState.File;
+    }
+
+    public void StopRenaming()
+    {
+        renamingState = RenamingState.None;
+    }
+
+    public void Rename()
+    {
+        string newPath = Path.Combine(Path.GetDirectoryName(renamingItemPath), renamingItemName);
+        if (renamingState == RenamingState.Directory)
+        {
+            if (!Directory.Exists(newPath))
+            {
+                Directory.Move(renamingItemPath, newPath);
+            }
+        }
+        else
+        {
+            if (!File.Exists(newPath))
+            {
+                File.Move(renamingItemPath, newPath);
+            }
+        }
+        renamingState = RenamingState.None;
+    }
+
+    public void CreateDir()
+    {
+        int i = 0;
+        string path;
+        do 
+        {
+            path = Path.Combine(curDir, $"Directory {i}");
+        } while (Directory.Exists(path) && i++ < 1000);
+        
+        Directory.CreateDirectory(path);
+    }
+    public void CreateCmsEntity()
+    {
+        var file = GetUniqueFile("Cms Entity", ".ent");
+        YAML.SerializeToFile(file.path, new SerializedCmsEntity(file.name));
+    }
+    public (string name, string path) GetUniqueFile(string fileName, string extension)
+    {
+        int i = 0;
+        string path, name;
+        do 
+        { 
+            name = $"{fileName} {i}";
+            path = Path.Combine(curDir, name) + extension;
+        } while (File.Exists(path) && i++ < 1000);
+        return (name, path);
+    }
+}
+
+public class CmsWindow
+{
+    public CmsSystem cmsSystem;
+    public CmsEntitySystem cmsEntitySystem;
+    public AssemblySystem assemblySystem;
+
+    public bool active = true;
+    
+    
+    public CmsWindow(CmsSystem cmsSystem, CmsEntitySystem cmsEntitySystem, AssemblySystem assemblySystem)
+    {
+        this.cmsSystem = cmsSystem;
+        this.cmsEntitySystem = cmsEntitySystem;
+        this.assemblySystem = assemblySystem;
     }
     
     public void Display()
@@ -330,59 +344,121 @@ public class CmsWindow
         {
             if (ImGui.MenuItem("New CmsEntity"))
             {
-                int i = 0;
-                string entName, path;
-                do
-                {
-                    entName = $"New Cms Entity {i}";
-                    path = Path.Combine(curDir, entName) + ".ent";
-                } while (File.Exists(path) && i++ < 1000);
-
-                YAML.SerializeToFile(path, new SerializedCmsEntity(entName));
+                cmsSystem.CreateCmsEntity();
             }
-
-            if (ImGui.MenuItem("Create Directory"))
+            if (ImGui.MenuItem("New Directory"))
             {
-                int i = 0;
-                string dirName, path;
-                do
-                {
-                    dirName = "New Directory" + i;
-                    path = Path.Combine(curDir, dirName);
-                } while (Directory.Exists(path) && i++ < 1000);
-                
-                Directory.CreateDirectory(path);
+                cmsSystem.CreateDir();
             }
             ImGui.EndPopup();
         }
 
-        if (!string.IsNullOrEmpty(curDir))
+        if (!string.IsNullOrEmpty(cmsSystem.curDir))
         {
             if (ImGui.Button("<-"))
             {
-                curDir = Directory.GetParent(curDir).FullName;
+                cmsSystem.curDir = Path.GetDirectoryName(cmsSystem.curDir);
             }
             ImGui.Separator();
             ImGui.Columns(8, borders: false);
-            foreach (var i in Directory.GetDirectories(curDir))
+
+            string deleteDir = null;
+            foreach (var dir in Directory.GetDirectories(cmsSystem.curDir))
             {
-                if (ImGui.Button(Path.GetFileName(i)))
+                if (cmsSystem.RenamingDirectory && cmsSystem.renamingItemPath == dir)
                 {
-                    curDir = i;
-                }
-                ImGui.NextColumn();
-            }
-            foreach (var i in Directory.GetFiles(curDir))
-            {
-                if (ImGui.Button(Path.GetFileNameWithoutExtension(i)))
-                {
-                    if (Path.GetExtension(i) == ".ent")
+                    StringBuilder sb = new(cmsSystem.renamingItemName, 256);
+                    ImGui.SetKeyboardFocusHere();
+                    if (ImGui.InputText("##DirectoryRenaming", sb))
                     {
-                        cmsEntityWindow.LoadCmsEntity(i);
+                        cmsSystem.renamingItemName = sb.ToString();
+                    }
+
+                    if (ImGui.IsKeyPressed(ImGuiKey.ImGuiKey_Enter) || ImGui.IsMouseClicked(ImGuiMouseButton.ImGuiMouseButton_Left))
+                    {
+                        cmsSystem.Rename();
+                    }
+                    else if (ImGui.IsKeyPressed(ImGuiKey.ImGuiKey_Escape))
+                    {
+                        cmsSystem.StopRenaming();
                     }
                 }
+                else
+                {
+                    if (ImGui.Button(Path.GetFileName(dir)))
+                    {
+                        cmsSystem.curDir = dir;
+                    }    
+                }
+                if (ImGui.BeginPopupContextItem($"FileСontextMenu{dir}"))
+                {
+                    if (ImGui.MenuItem("Rename"))
+                    {
+                        cmsSystem.StartRenaming(dir, true);
+                    }
+                    if (ImGui.MenuItem("Delete"))
+                    {
+                        deleteDir = dir;
+                    }
+                    ImGui.EndPopup();
+                }
                 ImGui.NextColumn();
             }
+            if (deleteDir != null)
+            {
+                Directory.Delete(deleteDir, true);
+            }
+
+            string deleteFile = null;
+            foreach (var file in Directory.GetFiles(cmsSystem.curDir))
+            {
+                if (cmsSystem.RenamingFile && cmsSystem.renamingItemPath == file)
+                {
+                    StringBuilder sb = new(cmsSystem.renamingItemName, 256);
+                    ImGui.SetKeyboardFocusHere();
+                    if (ImGui.InputText("##FileRenaming", sb))
+                    {
+                        cmsSystem.renamingItemName = sb.ToString();
+                    }
+
+                    if (ImGui.IsKeyPressed(ImGuiKey.ImGuiKey_Enter))
+                    {
+                        cmsSystem.Rename();
+                    }
+                    else if (ImGui.IsKeyPressed(ImGuiKey.ImGuiKey_Escape) || ImGui.IsMouseClicked(ImGuiMouseButton.ImGuiMouseButton_Left))
+                    {
+                        cmsSystem.StopRenaming();
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button(Path.GetFileName(file)))
+                    {
+                        if (Path.GetExtension(file) == ".ent")
+                        {
+                            cmsEntitySystem.LoadCmsEntity(file);
+                        }
+                    }
+                }
+                if (ImGui.BeginPopupContextItem($"FileСontextMenu{file}"))
+                {
+                    if (ImGui.MenuItem("Rename"))
+                    {
+                        cmsSystem.StartRenaming(file, false);
+                    }
+                    if (ImGui.MenuItem("Delete"))
+                    {
+                        deleteFile = file;
+                    }
+                    ImGui.EndPopup();
+                }
+                ImGui.NextColumn();
+            }
+            if (deleteFile != null)
+            {
+                File.Delete(deleteFile);
+            }
+            
             ImGui.Columns(1);
             ImGui.Separator();
         }
